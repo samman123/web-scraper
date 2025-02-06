@@ -1,8 +1,10 @@
 require "httparty"
 require "nokogiri"
+require "json"
+require "csv"
 
 # Fetch the HTML content
-response = HTTParty.get("https://www.mediawiki.org/wiki/API:Main_page")
+response = HTTParty.get("https://en.wikipedia.org/api/rest_v1/page/random/html")
 
 if response.code == 200
   html = response.body
@@ -14,38 +16,60 @@ if response.code == 200
   doc.css('.ads').remove
   doc.css('a').remove
 
-  # Extract and print relevant content
+  description = []
+
+  # Extract content from <p> tags
   doc.css('p').each do |p|
-    puts p.text.strip  # Clean the text and print
+    description << p.text.strip  # Add the clean text to the description array
   end
-
+  
+  # Extract content from <li> tags
   doc.css('li').each do |li|
-    puts li.text.strip
+    description << li.text.strip
   end
-
+  
+  # Extract content from <dl> tags
   doc.css('dl').each do |dl|
-    puts dl.text.strip
+    description << dl.text.strip
   end
-
+  
+  # Extract content from <dt> tags
   doc.css('dt').each do |dt|
-    puts dt.text.strip
+    description << dt.text.strip
   end
-
+  
+  # Extract content from <dd> tags
   doc.css('dd').each do |dd|
-    puts dd.text.strip
+    description << dd.text.strip
   end
-
+  
+  # Extract content from <tr> tags
   doc.css('tr').each do |tr|
-    puts tr.text.strip
+    description << tr.text.strip
   end
-
+  
+  # Extract content from <td> tags
   doc.css('td').each do |td|
-    puts td.text.strip
+    description << td.text.strip
   end
-
+  
+  # Extract content from <th> tags
   doc.css('th').each do |th|
-    puts th.text.strip
+    description << th.text.strip
   end
+  
+  # Now, print the description
+  description.each do |line|
+    puts line
+  end
+  
+
+CSV.open('data.csv', "w") do |csv|
+    description.each do |line|
+        csv << [line]
+    end
+end
+
 else
-  puts "Failed to retrieve the page. HTTP Status: #{response.code}"
+    puts "Failed to retrieve the page. HTTP status: #{respone.code}"
 end
