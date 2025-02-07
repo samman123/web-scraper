@@ -14,7 +14,6 @@ if response.code == 200
   doc.css('script').remove
   doc.css('footer').remove
   doc.css('.ads').remove
-  doc.css('a').remove
 
   description = []
 
